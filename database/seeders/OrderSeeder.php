@@ -17,7 +17,7 @@ class OrderSeeder extends Seeder
         $products = Product::all();
 
         // Create 50 orders (You can change the number as needed)
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             // Pick a random customer for each order
             $customer = $customers->random();
 
@@ -27,7 +27,7 @@ class OrderSeeder extends Seeder
 
             $parent_order_qty = 0;
             $parent_order_amount = 0;
-            $num_child_orders = rand(1, 3);  // Random number of child orders per parent order
+            $num_child_orders = rand(1, 10);  // Random number of child orders per parent order
 
             for ($x = 0; $x < $num_child_orders; $x++) {
                 $product = $products->random();

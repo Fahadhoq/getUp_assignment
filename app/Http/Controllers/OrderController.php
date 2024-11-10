@@ -29,15 +29,4 @@ class OrderController extends Controller
 
     }
 
-    public function recentOrders($customerId)
-    {
-        $recentOrders = Order::with('product')  // Eager load related product data
-            ->where('customer_id', $customerId)  // Filter by customer
-            ->orderByDesc('created_at')  // Sort by the most recent
-            ->first();
-
-        return response()->json($recentOrders);
-    }
-
-    
 }
