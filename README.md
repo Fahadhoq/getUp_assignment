@@ -81,15 +81,15 @@ The task required setting up a queued job to send a welcome email to the user af
 The task required writing an optimized query to retrieve orders with their associated products, grouped by product category.
 
 **Steps:**
-     1. Eager Loading: 
-      Order::with(['childOrders.product.category', 'customer']): You're eager loading childOrders, product, and category, which will optimize performance by reducing the number of queries.
-    
-     2. Filtering Parent: 
-     Orders::whereNull('parent_order_id'): Ensures that only parent orders (i.e., orders with no parent) are fetched.
-    
-     3.Grouping Child Orders:
-     foreach ($data['parent_orders'] as $parent_order): Iterating over each parent order.
-     groupBy(function ($order) {...}): Grouping the child orders by product category, which is useful for displaying them by category in the UI.
+1. Eager Loading: 
+     Order::with(['childOrders.product.category', 'customer']): You're eager loading childOrders, product, and category, which will optimize performance by reducing the number of queries.
+
+2. Filtering Parent: 
+Orders::whereNull('parent_order_id'): Ensures that only parent orders (i.e., orders with no parent) are fetched.
+
+3. Grouping Child Orders:
+foreach ($data['parent_orders'] as $parent_order): Iterating over each parent order.
+groupBy(function ($order) {...}): Grouping the child orders by product category, which is useful for displaying them by category in the UI.
 
 **Challenges:**
 - The application involves two tables: `products` and `orders`. An order can contain multiple products, so a pivot table is needed to map the relationship between orders and products.
