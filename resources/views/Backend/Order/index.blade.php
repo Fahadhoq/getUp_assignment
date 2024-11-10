@@ -1,25 +1,39 @@
 @extends('layouts.MasterDashboard')
 
 @section('css')
-<!-- Include any necessary datatable CSS -->
+<!-- Include necessary datatable and custom CSS -->
 @include('layouts.partials.datatable-css')
+<style>
+    .category-header {
+        background-color: #f8f9fa;
+        font-weight: bold;
+        text-align: center;
+        padding: 10px;
+        border-top: 2px solid #343a40;
+        border-bottom: 1px solid #ced4da;
+        margin-bottom: 10px;
+    }
+
+    .table-category {
+        margin-bottom: 20px;
+    }
+
+    .no-child-orders {
+        text-align: center;
+        color: #6c757d;
+        margin: 20px 0;
+    }
+</style>
 @endsection
 
 @section('container')
-
-<!-- ============================================================== -->
-<!-- Start right Content here -->
-<!-- ============================================================== -->
 <div class="content-page">
-    <!-- Start content -->
-    <div class="content">               
+    <div class="content">
         <div class="container-fluid">
-
-            <!-- Start page-title -->
             <div class="page-title-box">
                 <div class="row align-items-center">
                     <div class="col-sm-6">
-                        <h4 class="page-title">Recent Orders</h4>
+                        <h4 class="page-title">Recent Orders by Product Category</h4>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-right">
@@ -30,68 +44,69 @@
                     </div>
                 </div>
             </div>
-            <!-- End page-title -->
 
             <!-- Main container start -->
             <div class="row">
                 <div class="col-12">
                     <div class="card m-b-30">
                         <div class="card-body">
-                            <!-- Message show (if any) -->
                             @include('layouts.partials.message-show')
 
-                            <!-- Orders Table -->
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                <thead class="thead-default">
-                                    <tr>
-                                        <th style="text-align:center">Order ID</th>
-                                        <th style="text-align:center">Customer ID</th>
-                                        <th style="text-align:center">Product Name</th>
-                                        <th style="text-align:center">Category</th>
-                                        <th style="text-align:center">Total Amount</th>
-                                        <th style="text-align:center">Created At</th>
-                                    </tr>
-                                </thead>
+                            @foreach($parent_orders as $parent_order)
+                                <div class="mb-4">
+                                    <h5 class="category-header">Order ID: {{ $parent_order->id }}</br> 
+                                        <small>{{ $parent_order->customer->name }} </small>
+                                    </h5>
 
-                                <tbody>
-                                @foreach($orders as $order)
-                                    <tr>
-                                        <td style="text-align:center">{{ $order->id }}</td>
-                                        <td style="text-align:center">{{ $order->customer != null ? $order->customer->name : ''}}</td>
-                                        <td style="text-align:center">{{ $order->product != null ? $order->product->name : '' }}</td>
-                                        <td style="text-align:center">{{ $order->product != null ? $order->product->category->name : '' }}</td>
-                                        <td style="text-align:center">{{ $order->total_price }}</td>
-                                        <td style="text-align:center">{{ $order->created_at != null ? $order->created_at->format('Y-m-d H:i:s') : ''}}</td>
-                                    </tr>
-                                @endforeach    
-                                </tbody>
-                            </table>
+                                    @if($parent_order->child_orders_grouped->isEmpty())
+                                        <p class="no-child-orders">No child orders for this parent order.</p>
+                                    @else
+                                        @foreach($parent_order->child_orders_grouped as $category => $groupedOrders)
+                                        <h6 class="mb-3 text-primary">Category: {{ ucwords(str_replace(['_', '-'], ' ', $category)) }}</h6>
+
+                                            <table class="table table-hover table-bordered table-category">
+                                                <thead class="thead-light">
+                                                    <tr>
+                                                        <th style="text-align:center">SL</th>
+                                                        <th style="text-align:center">Product Name</th>
+                                                        <th style="text-align:center">Category</th>
+                                                        <th style="text-align:center">Total Amount</th>
+                                                        <th style="text-align:center">Created At</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @php $i = 1; @endphp
+                                                    @foreach($groupedOrders as $order)
+                                                        <tr>
+                                                            <td style="text-align:center">{{ $i++ }}</td>
+                                                            <td style="text-align:center">{{ $order->product->name }}</td>
+                                                            <td style="text-align:center">{{ $order->product->category->name }}</td>
+                                                            <td style="text-align:center">{{ $order->total_price }}</td>
+                                                            <td style="text-align:center">{{ $order->created_at->format('Y-m-d H:i:s') }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        @endforeach
+                                    @endif
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- End row -->
-
             <!-- Main container end -->
-
         </div>
-        <!-- container-fluid -->
     </div>
-    <!-- content -->
 </div>
-<!-- ============================================================== -->
-<!-- End Right content here -->
-<!-- ============================================================== -->
-
 @endsection
 
 @section('jquery')
-<!-- Include any necessary datatable JS -->
 @include('layouts.partials.datatable-js')
 @endsection
 
 @section('script')
 <script>
-    // Any additional custom scripts you may need for the page
+    // Custom script if needed
 </script>
 @endsection

@@ -11,20 +11,20 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $data['orders'] =  Order::with(['product.category', 'customer']) // Eager load product and category data to prevent N+1 queries
-            ->select(
-                'categories.id as category_id',
-                'categories.name as category_name',
-                DB::raw('COUNT(orders.id) as total_orders'), // Count of orders for the category
-                DB::raw('SUM(orders.total_price) as total_revenue') // Total revenue for the category
-            )
-            ->join('products', 'orders.product_id', '=', 'products.id') // Join with products table
-            ->join('categories', 'products.category_id', '=', 'categories.id') // Join with categories table
-            ->groupBy('categories.id', 'categories.name') // Group only by category ID and name
-            ->orderBy('categories.name') // Order by category name
+        $data['parent_orders'] = Order::with(['childOrders.product.category','customer'])  // Eager load the child orders and their products and categories
+            ->whereNull('parent_order_id')  // Fetch only parent orders
             ->get();
-    
-    
+
+        // Iterate over the parent orders and group their child orders by product category
+        foreach ($data['parent_orders'] as $parent_order) {
+            $parent_order->child_orders_grouped = $parent_order->childOrders->groupBy(function ($order) {
+                return $order->product->category->name;  // Grouping by product category
+            });
+        }
+
+        // Now, the $parent_orders collection contains a `child_orders_grouped` attribute for each parent order,
+        // which is the child orders grouped by their product category.
+
         return view('Backend.Order.index' , $data);
 
     }
