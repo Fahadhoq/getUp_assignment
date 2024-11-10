@@ -18,7 +18,7 @@
                             <a href="javascript:void(0);" class="waves-effect"><i class="icon-mail-open"></i><span> ROLE <span class="float-right menu-arrow"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                             <ul class="submenu">
                                 <li><a href="{{ route('roles.index') }}"> {{ __('Show All Roles') }}</a></li>
-                                @can('create')
+                                @can('create',App\Models\Product::class)
                                   <li><a href="{{ route('role.assign') }}"> {{ __('Assign Role') }}</a></li>
                                 @endcan
                             </ul>
@@ -35,7 +35,7 @@
                             <a href="javascript:void(0);" class="waves-effect"><i class="icon-mail-open"></i><span> PRODUCT <span class="float-right menu-arrow"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                             <ul class="submenu">
                                 <li><a href="{{ route('products.index') }}"> {{ __('Show All Products') }}</a></li>
-                                @can('create')
+                                @can('create',App\Models\Product::class)
                                   <li><a href="{{ route('product.create') }}"> {{ __('Create') }}</a></li>
                                 @endcan
                             </ul>
